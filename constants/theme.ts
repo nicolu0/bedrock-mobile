@@ -16,6 +16,19 @@ export const Colors = {
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
+    // Semantic colors
+    success: '#22c55e',
+    successBackground: '#dcfce7',
+    danger: '#ef4444',
+    dangerBackground: '#fee2e2',
+    warning: '#f59e0b',
+    warningBackground: '#fef3c7',
+    // Card colors
+    card: '#f8f9fa',
+    cardBorder: '#e5e7eb',
+    // Secondary
+    secondary: '#6b7280',
+    secondaryBackground: '#f3f4f6',
   },
   dark: {
     text: '#ECEDEE',
@@ -24,6 +37,19 @@ export const Colors = {
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
+    // Semantic colors
+    success: '#4ade80',
+    successBackground: '#166534',
+    danger: '#f87171',
+    dangerBackground: '#991b1b',
+    warning: '#fbbf24',
+    warningBackground: '#92400e',
+    // Card colors
+    card: '#1e2022',
+    cardBorder: '#2d3134',
+    // Secondary
+    secondary: '#9ca3af',
+    secondaryBackground: '#374151',
   },
 };
 
