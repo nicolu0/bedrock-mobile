@@ -12,34 +12,31 @@ export type Database = {
       actions: {
         Row: {
           id: string
-          issue_id: string
-          recommendation: string
-          reasoning: string | null
+          user_id: string
+          issue_id: string | null
+          title: string
+          detail: string | null
           status: string
-          estimated_cost: number | null
-          proposed_vendor_id: string | null
           created_at: string
           updated_at: string
         }
         Insert: {
           id?: string
-          issue_id: string
-          recommendation: string
-          reasoning?: string | null
+          user_id: string
+          issue_id?: string | null
+          title: string
+          detail?: string | null
           status?: string
-          estimated_cost?: number | null
-          proposed_vendor_id?: string | null
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
-          issue_id?: string
-          recommendation?: string
-          reasoning?: string | null
+          user_id?: string
+          issue_id?: string | null
+          title?: string
+          detail?: string | null
           status?: string
-          estimated_cost?: number | null
-          proposed_vendor_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -52,10 +49,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "actions_proposed_vendor_id_fkey"
-            columns: ["proposed_vendor_id"]
+            foreignKeyName: "actions_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "vendors"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
@@ -107,6 +104,7 @@ export type Database = {
           updated_at: string
           urgency: string
           vendor_id: string | null
+          suggested_vendor_id: string | null
         }
         Insert: {
           created_at?: string
@@ -119,6 +117,7 @@ export type Database = {
           updated_at?: string
           urgency: string
           vendor_id?: string | null
+          suggested_vendor_id?: string | null
         }
         Update: {
           created_at?: string
@@ -131,6 +130,7 @@ export type Database = {
           updated_at?: string
           urgency?: string
           vendor_id?: string | null
+          suggested_vendor_id?: string | null
         }
         Relationships: [
           {
@@ -150,6 +150,13 @@ export type Database = {
           {
             foreignKeyName: "issues_vendor_id_fkey"
             columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issues_suggested_vendor_id_fkey"
+            columns: ["suggested_vendor_id"]
             isOneToOne: false
             referencedRelation: "vendors"
             referencedColumns: ["id"]
@@ -336,11 +343,12 @@ export type ActionStatus = "pending" | "approved" | "denied" | "executed" | "fai
 
 // Joined types for UI
 export type ActionWithDetails = Action & {
-  issue: Issue & {
+  issue: (Issue & {
     unit: Unit & {
       building: Building
     }
     tenant: Tenant
-  }
-  proposed_vendor: Vendor | null
+    vendor: Vendor | null
+    suggested_vendor: Vendor | null
+  }) | null
 }

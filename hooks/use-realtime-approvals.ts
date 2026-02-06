@@ -29,6 +29,8 @@ export function useRealtimeApprovals(options: UseRealtimeApprovalsOptions) {
           const event = payload.eventType as RealtimeEvent
           const action = (payload.new || payload.old) as Action
 
+          console.log("[Realtime] Action event:", event, action?.title)
+
           options.onChange?.(event, action)
 
           switch (event) {
@@ -44,7 +46,9 @@ export function useRealtimeApprovals(options: UseRealtimeApprovalsOptions) {
           }
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        console.log("[Realtime] Subscription status:", status)
+      })
 
     channelRef.current = channel
 

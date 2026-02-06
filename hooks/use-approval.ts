@@ -34,9 +34,10 @@ export function useApproval(id: string | undefined): UseApprovalReturn {
               *,
               building:buildings (*)
             ),
-            tenant:tenants (*)
-          ),
-          proposed_vendor:vendors (*)
+            tenant:tenants (*),
+            vendor:vendors!issues_vendor_id_fkey (*),
+            suggested_vendor:vendors!issues_suggested_vendor_id_fkey (*)
+          )
         `)
         .eq("id", id)
         .single()

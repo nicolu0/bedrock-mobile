@@ -35,22 +35,16 @@ export async function approveRequest(
       return { success: false, error: actionError.message }
     }
 
-    // Update the issue status to 'in progress' and assign vendor if applicable
-    const issueUpdate: { status: string; vendor_id?: string } = {
-      status: "in progress",
-    }
+    // Update the issue status to 'in progress' if linked to an issue
+    if (action.issue_id) {
+      const { error: issueError } = await supabase
+        .from("issues")
+        .update({ status: "in progress" })
+        .eq("id", action.issue_id)
 
-    if (action.proposed_vendor_id) {
-      issueUpdate.vendor_id = action.proposed_vendor_id
-    }
-
-    const { error: issueError } = await supabase
-      .from("issues")
-      .update(issueUpdate)
-      .eq("id", action.issue_id)
-
-    if (issueError) {
-      return { success: false, error: issueError.message }
+      if (issueError) {
+        return { success: false, error: issueError.message }
+      }
     }
 
     return { success: true }
@@ -91,14 +85,16 @@ export async function denyRequest(
       return { success: false, error: actionError.message }
     }
 
-    // Set issue back to 'in progress' so AI can propose alternative
-    const { error: issueError } = await supabase
-      .from("issues")
-      .update({ status: "in progress" })
-      .eq("id", action.issue_id)
+    // Set issue back to 'in progress' so AI can propose alternative (if linked)
+    if (action.issue_id) {
+      const { error: issueError } = await supabase
+        .from("issues")
+        .update({ status: "in progress" })
+        .eq("id", action.issue_id)
 
-    if (issueError) {
-      return { success: false, error: issueError.message }
+      if (issueError) {
+        return { success: false, error: issueError.message }
+      }
     }
 
     return { success: true }

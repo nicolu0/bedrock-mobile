@@ -1,16 +1,17 @@
-import { useCallback } from "react"
+import { useCallback, useState, useMemo } from "react"
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
   RefreshControl,
   ActivityIndicator,
+  Pressable,
 } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { ThemedView } from "@/components/themed-view"
 import { ThemedText } from "@/components/themed-text"
 import { ApprovalCard } from "@/components/approval/approval-card"
+import { TinderApprovalView } from "@/components/approval/tinder-approval-view"
 import { useApprovals } from "@/hooks/use-approvals"
 import { useRealtimeApprovals } from "@/hooks/use-realtime-approvals"
 import { Colors } from "@/constants/theme"
@@ -23,7 +24,11 @@ export default function ApprovalsScreen() {
   const colorScheme = useColorScheme() ?? "light"
   const colors = Colors[colorScheme]
 
+  const [viewMode, setViewMode] = useState<"list" | "tinder">("list")
   const { approvals, loading, error, refresh } = useApprovals({ status: "pending" })
+
+  // Reverse for oldest-first in Tinder view
+  const tinderApprovals = useMemo(() => [...approvals].reverse(), [approvals])
 
   // Real-time updates
   useRealtimeApprovals({
@@ -55,9 +60,28 @@ export default function ApprovalsScreen() {
     )
   }
 
+  const toggleViewMode = () => {
+    setViewMode((prev) => (prev === "list" ? "tinder" : "list"))
+  }
+
   const renderHeader = () => (
     <View style={styles.header}>
-      <ThemedText type="title">Approvals</ThemedText>
+      <View style={styles.headerRow}>
+        <ThemedText type="title">Approvals</ThemedText>
+        <Pressable
+          onPress={toggleViewMode}
+          style={({ pressed }) => [
+            styles.toggleButton,
+            { backgroundColor: colors.secondaryBackground, opacity: pressed ? 0.7 : 1 },
+          ]}
+        >
+          <IconSymbol
+            name={viewMode === "list" ? "rectangle.stack" : "list.bullet"}
+            size={20}
+            color={colors.tint}
+          />
+        </Pressable>
+      </View>
       <ThemedText style={[styles.subtitle, { color: colors.secondary }]}>
         {approvals.length} pending request{approvals.length !== 1 ? "s" : ""}
       </ThemedText>
@@ -82,22 +106,33 @@ export default function ApprovalsScreen() {
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
-      <FlatList
-        data={approvals}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        ListHeaderComponent={renderHeader}
-        ListEmptyComponent={renderEmpty}
-        refreshControl={
-          <RefreshControl
-            refreshing={loading}
+      {viewMode === "list" ? (
+        <FlatList
+          data={approvals}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          ListHeaderComponent={renderHeader}
+          ListEmptyComponent={renderEmpty}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={refresh}
+              tintColor={colors.tint}
+            />
+          }
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <>
+          <View style={styles.tinderHeader}>{renderHeader()}</View>
+          <TinderApprovalView
+            approvals={tinderApprovals}
+            onComplete={() => setViewMode("list")}
             onRefresh={refresh}
-            tintColor={colors.tint}
           />
-        }
-        showsVerticalScrollIndicator={false}
-      />
+        </>
+      )}
       {loading && approvals.length === 0 && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color={colors.tint} />
@@ -118,6 +153,19 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 20,
+  },
+  tinderHeader: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  toggleButton: {
+    padding: 8,
+    borderRadius: 8,
   },
   subtitle: {
     marginTop: 4,

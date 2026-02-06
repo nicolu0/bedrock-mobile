@@ -23,6 +23,8 @@ export const Colors = {
     dangerBackground: '#fee2e2',
     warning: '#f59e0b',
     warningBackground: '#fef3c7',
+    info: '#3b82f6',
+    infoBackground: '#dbeafe',
     // Card colors
     card: '#f8f9fa',
     cardBorder: '#e5e7eb',
@@ -44,6 +46,8 @@ export const Colors = {
     dangerBackground: '#991b1b',
     warning: '#fbbf24',
     warningBackground: '#92400e',
+    info: '#60a5fa',
+    infoBackground: '#1e40af',
     // Card colors
     card: '#1e2022',
     cardBorder: '#2d3134',

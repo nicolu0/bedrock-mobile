@@ -25,6 +25,10 @@ export function useApprovals(
       setLoading(true)
       setError(null)
 
+      // Debug: Check current session
+      const { data: { session } } = await supabase.auth.getSession()
+      console.log("[useApprovals] Current user:", session?.user?.email ?? "NOT LOGGED IN")
+
       let query = supabase
         .from("actions")
         .select(`
@@ -35,9 +39,10 @@ export function useApprovals(
               *,
               building:buildings (*)
             ),
-            tenant:tenants (*)
-          ),
-          proposed_vendor:vendors (*)
+            tenant:tenants (*),
+            vendor:vendors!issues_vendor_id_fkey (*),
+            suggested_vendor:vendors!issues_suggested_vendor_id_fkey (*)
+          )
         `)
         .order("created_at", { ascending: false })
 
@@ -48,10 +53,12 @@ export function useApprovals(
       const { data, error: fetchError } = await query
 
       if (fetchError) {
+        console.log("[useApprovals] Error:", fetchError.message)
         setError(fetchError.message)
         return
       }
 
+      console.log("[useApprovals] Fetched approvals:", data?.length ?? 0)
       setApprovals((data as unknown as ActionWithDetails[]) ?? [])
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch approvals")
