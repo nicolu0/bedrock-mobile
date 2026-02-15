@@ -24,7 +24,23 @@ const MAPPING = {
   'person': 'person',
   'checkmark.circle': 'check-circle',
   'exclamationmark.triangle': 'warning',
+  'xmark.circle': 'cancel',
+  'tray': 'inbox',
+  'clock.arrow.circlepath': 'history',
+  'gearshape.fill': 'settings',
+  'person.circle': 'account-circle',
+  'key.fill': 'vpn-key',
+  'xmark.circle.fill': 'cancel',
+  'line.3.horizontal.decrease': 'filter-list',
+  'arrow.up.arrow.down': 'swap-vert',
 } as IconMapping;
+
+// Thin/outline variants for Material Icons
+const THIN_MAPPING = {
+  'checkmark.circle': 'check-circle-outline',
+  'xmark.circle': 'highlight-off',
+  'tray': 'inbox',
+} as Partial<IconMapping>;
 
 /**
  * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.
@@ -36,6 +52,7 @@ export function IconSymbol({
   size = 24,
   color,
   style,
+  weight,
 }: {
   name: IconSymbolName;
   size?: number;
@@ -43,5 +60,10 @@ export function IconSymbol({
   style?: StyleProp<TextStyle>;
   weight?: SymbolWeight;
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+  // Use thin variant if requested and available
+  const iconName = weight === 'thin' && THIN_MAPPING[name]
+    ? THIN_MAPPING[name]!
+    : MAPPING[name];
+
+  return <MaterialIcons color={color} size={size} name={iconName} style={style} />;
 }

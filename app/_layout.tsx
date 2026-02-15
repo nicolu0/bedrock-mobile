@@ -1,4 +1,5 @@
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import type { Theme } from '@react-navigation/native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -6,6 +7,18 @@ import 'react-native-reanimated';
 import { useAuth } from '@/hooks/use-auth';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/theme';
+
+const BedrockTheme: Theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#f6f5f3',
+    card: '#ffffff',
+    text: '#171717',
+    border: '#e5e5e5',
+    primary: '#171717',
+  },
+};
 
 export const unstable_settings = {
   initialRouteName: 'sign-in',
@@ -55,7 +68,7 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <ThemeProvider value={DefaultTheme}>
+    <ThemeProvider value={BedrockTheme}>
       <RootLayoutNav />
       <StatusBar style="dark" />
     </ThemeProvider>
@@ -67,6 +80,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#f6f5f3',
   },
 });

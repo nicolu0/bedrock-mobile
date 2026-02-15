@@ -3,12 +3,11 @@ import {
   View,
   Text,
   StyleSheet,
-  Modal,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
 } from "react-native"
 import { Button } from "@/components/ui/button"
+import { AnimatedBottomSheet } from "@/components/ui/animated-bottom-sheet"
 import { Colors } from "@/constants/theme"
 import { useColorScheme } from "@/hooks/use-color-scheme"
 import { approveRequest, denyRequest } from "@/lib/approval-actions"
@@ -67,7 +66,7 @@ export function ApprovalActions({
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.background, borderTopColor: colors.cardBorder }]}>
       <View style={styles.buttonRow}>
         <View style={styles.buttonWrapper}>
           <Button
@@ -89,17 +88,13 @@ export function ApprovalActions({
         </View>
       </View>
 
-      <Modal
+      <AnimatedBottomSheet
         visible={modalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={handleCancel}
+        onClose={handleCancel}
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.modalContainer}
         >
-          <Pressable style={styles.modalBackdrop} onPress={handleCancel} />
           <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>
               {actionType === "approve" ? "Approve Request" : "Deny Request"}
@@ -134,7 +129,7 @@ export function ApprovalActions({
             </View>
           </View>
         </KeyboardAvoidingView>
-      </Modal>
+      </AnimatedBottomSheet>
     </View>
   )
 }
@@ -148,7 +143,6 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 32,
     borderTopWidth: 1,
-    borderTopColor: "#e5e7eb",
   },
   buttonRow: {
     flexDirection: "row",
@@ -156,14 +150,6 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     flex: 1,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  modalBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
     borderTopLeftRadius: 20,

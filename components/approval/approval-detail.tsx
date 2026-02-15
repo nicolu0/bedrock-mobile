@@ -33,7 +33,7 @@ export function ApprovalDetail({ approval }: ApprovalDetailProps) {
       <Card style={styles.section}>
         <CardHeader>
           <View style={styles.headerRow}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Action Details</Text>
+            <Text style={[styles.sectionTitle, { color: colors.label }]}>ACTION DETAILS</Text>
             <StatusBadge status={approval.status} />
           </View>
         </CardHeader>
@@ -45,6 +45,23 @@ export function ApprovalDetail({ approval }: ApprovalDetailProps) {
             <Text style={[styles.detail, { color: colors.secondary }]}>
               {approval.detail}
             </Text>
+          )}
+          {approval.action_type && (
+            <View style={styles.actionTypeRow}>
+              <View style={[styles.actionTypeBadge, { backgroundColor: colors.infoBackground }]}>
+                <Text style={[styles.actionTypeText, { color: colors.info }]}>
+                  {approval.action_type === "triage_issue" ? "Triage Issue" : "Schedule Vendor"}
+                </Text>
+              </View>
+            </View>
+          )}
+          {approval.reasoning && (
+            <>
+              <Text style={[styles.fieldLabel, { color: colors.label }]}>AI REASONING</Text>
+              <Text style={[styles.detail, { color: colors.secondary }]}>
+                {approval.reasoning}
+              </Text>
+            </>
           )}
           <View style={[styles.timestampRow, { borderTopColor: colors.cardBorder }]}>
             <Text style={[styles.timestampLabel, { color: colors.secondary }]}>Created</Text>
@@ -68,7 +85,7 @@ export function ApprovalDetail({ approval }: ApprovalDetailProps) {
         <Card style={styles.section}>
           <CardHeader>
             <View style={styles.headerRow}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>Related Issue</Text>
+              <Text style={[styles.sectionTitle, { color: colors.label }]}>RELATED ISSUE</Text>
               <UrgencyBadge urgency={approval.issue.urgency} />
             </View>
           </CardHeader>
@@ -80,6 +97,18 @@ export function ApprovalDetail({ approval }: ApprovalDetailProps) {
               <Text style={[styles.description, { color: colors.secondary }]}>
                 {approval.issue.description}
               </Text>
+            )}
+            {approval.issue.suggested_vendor_action && (
+              <>
+                <Text style={[styles.fieldLabel, { color: colors.label }]}>SUGGESTED ACTION</Text>
+                <View style={styles.actionTypeRow}>
+                  <View style={[styles.actionTypeBadge, { backgroundColor: colors.secondaryBackground }]}>
+                    <Text style={[styles.actionTypeText, { color: colors.secondary }]}>
+                      {approval.issue.suggested_vendor_action === "use_vendor" ? "Use Vendor" : "Find Vendor"}
+                    </Text>
+                  </View>
+                </View>
+              </>
             )}
             <View style={styles.infoRow}>
               <IconSymbol name="building.2" size={16} color={colors.secondary} />
@@ -117,7 +146,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 11,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 3.5,
+  },
+  fieldLabel: {
+    fontSize: 11,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 3.5,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  actionTypeRow: {
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  actionTypeBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 9999,
+    alignSelf: "flex-start",
+  },
+  actionTypeText: {
+    fontSize: 12,
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.5,

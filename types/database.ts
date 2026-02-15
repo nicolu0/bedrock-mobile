@@ -17,6 +17,10 @@ export type Database = {
           title: string
           detail: string | null
           status: string
+          action_type: string | null
+          email_body: string | null
+          reasoning: string | null
+          vendor_email_subject: string | null
           created_at: string
           updated_at: string
         }
@@ -27,6 +31,10 @@ export type Database = {
           title: string
           detail?: string | null
           status?: string
+          action_type?: string | null
+          email_body?: string | null
+          reasoning?: string | null
+          vendor_email_subject?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -37,6 +45,10 @@ export type Database = {
           title?: string
           detail?: string | null
           status?: string
+          action_type?: string | null
+          email_body?: string | null
+          reasoning?: string | null
+          vendor_email_subject?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -105,6 +117,7 @@ export type Database = {
           urgency: string
           vendor_id: string | null
           suggested_vendor_id: string | null
+          suggested_vendor_action: string | null
         }
         Insert: {
           created_at?: string
@@ -118,6 +131,7 @@ export type Database = {
           urgency: string
           vendor_id?: string | null
           suggested_vendor_id?: string | null
+          suggested_vendor_action?: string | null
         }
         Update: {
           created_at?: string
@@ -131,6 +145,7 @@ export type Database = {
           urgency?: string
           vendor_id?: string | null
           suggested_vendor_id?: string | null
+          suggested_vendor_action?: string | null
         }
         Relationships: [
           {
@@ -272,6 +287,7 @@ export type Database = {
           name: string
           phone: string | null
           trade: string | null
+          note: string | null
           updated_at: string
           user_id: string
         }
@@ -282,6 +298,7 @@ export type Database = {
           name: string
           phone?: string | null
           trade?: string | null
+          note?: string | null
           updated_at?: string
           user_id: string
         }
@@ -292,6 +309,7 @@ export type Database = {
           name?: string
           phone?: string | null
           trade?: string | null
+          note?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -339,7 +357,9 @@ export type Tenant = Tables<"tenants">
 export type User = Tables<"users">
 
 // Status types
-export type ActionStatus = "pending" | "approved" | "denied" | "executed" | "failed"
+export type ActionStatus = "pending" | "approved" | "denied"
+export type ActionType = "triage_issue" | "schedule_vendor"
+export type SuggestedVendorAction = "use_vendor" | "find_vendor"
 
 // Joined types for UI
 export type ActionWithDetails = Action & {

@@ -5,32 +5,33 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
+const tintColorLight = '#171717';
 const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
+    text: '#171717',
+    background: '#f6f5f3',
     tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
+    icon: '#a3a3a3',
+    tabIconDefault: '#a3a3a3',
     tabIconSelected: tintColorLight,
+    label: '#a3a3a3',
     // Semantic colors
-    success: '#22c55e',
-    successBackground: '#dcfce7',
-    danger: '#ef4444',
-    dangerBackground: '#fee2e2',
+    success: '#10b981',
+    successBackground: '#d1fae5',
+    danger: '#f43f5e',
+    dangerBackground: '#ffe4e6',
     warning: '#f59e0b',
     warningBackground: '#fef3c7',
-    info: '#3b82f6',
-    infoBackground: '#dbeafe',
+    info: '#0ea5e9',
+    infoBackground: '#e0f2fe',
     // Card colors
-    card: '#f8f9fa',
-    cardBorder: '#e5e7eb',
+    card: '#ffffff',
+    cardBorder: '#e5e5e5',
     // Secondary
-    secondary: '#6b7280',
-    secondaryBackground: '#f3f4f6',
+    secondary: '#525252',
+    secondaryBackground: '#f5f5f5',
   },
   dark: {
     text: '#ECEDEE',
@@ -39,6 +40,7 @@ export const Colors = {
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
+    label: '#9BA1A6',
     // Semantic colors
     success: '#4ade80',
     successBackground: '#166534',

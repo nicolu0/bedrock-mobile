@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react"
 import { View, Text, StyleSheet, Animated, Pressable } from "react-native"
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
+import { ThemedText } from "@/components/themed-text"
 import { UrgencyBadge } from "./urgency-badge"
 import { StatusBadge } from "./status-badge"
 import { ApprovalActions } from "./approval-actions"
 import { IconSymbol } from "@/components/ui/icon-symbol"
+import { CheckmarkIcon } from "@/components/ui/checkmark-icon"
 import { Colors } from "@/constants/theme"
 import { useColorScheme } from "@/hooks/use-color-scheme"
 import { ActionWithDetails } from "@/types/database"
@@ -73,19 +75,15 @@ export function TinderApprovalView({
   if (currentIndex >= approvals.length || approvals.length === 0) {
     return (
       <View style={styles.completionContainer}>
-        <IconSymbol name="checkmark.circle" size={80} color={colors.success} />
-        <Text style={[styles.completionTitle, { color: colors.text }]}>
-          All Caught Up!
-        </Text>
-        <Text style={[styles.completionSubtitle, { color: colors.secondary }]}>
-          You have processed all pending approvals.
-        </Text>
-        <Pressable
-          style={[styles.switchButton, { backgroundColor: colors.tint }]}
-          onPress={onComplete}
-        >
-          <Text style={styles.switchButtonText}>Switch to List View</Text>
-        </Pressable>
+        <View style={styles.completionContent}>
+          <CheckmarkIcon size={56} color={colors.success} />
+          <ThemedText type="subtitle" style={styles.completionTitle}>
+            All Caught Up!
+          </ThemedText>
+          <ThemedText style={[styles.completionSubtitle, { color: colors.secondary }]}>
+            No pending approvals at the moment. New requests will appear here automatically.
+          </ThemedText>
+        </View>
       </View>
     )
   }
@@ -247,27 +245,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 32,
   },
+  completionContent: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
   completionTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    marginTop: 20,
+    marginTop: 16,
     textAlign: "center",
   },
   completionSubtitle: {
-    fontSize: 16,
     marginTop: 8,
     textAlign: "center",
-    lineHeight: 24,
-  },
-  switchButton: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-    paddingVertical: 14,
-    borderRadius: 12,
-  },
-  switchButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
   },
 })

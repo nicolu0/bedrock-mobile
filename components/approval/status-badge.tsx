@@ -13,10 +13,8 @@ export function StatusBadge({ status }: StatusBadgeProps) {
   const getColors = (): { bg: string; text: string } => {
     switch (status.toLowerCase()) {
       case "approved":
-      case "executed":
         return { bg: colors.successBackground, text: colors.success }
       case "denied":
-      case "failed":
         return { bg: colors.dangerBackground, text: colors.danger }
       case "pending":
         return { bg: colors.warningBackground, text: colors.warning }
@@ -40,11 +38,13 @@ const styles = StyleSheet.create({
   badge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4,
+    borderRadius: 9999,
     alignSelf: "flex-start",
   },
   text: {
     fontSize: 12,
     fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
 })

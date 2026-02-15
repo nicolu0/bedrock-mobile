@@ -17,7 +17,12 @@ export function Card({ children, variant = "default", style, ...props }: CardPro
         {
           backgroundColor: variant === "default" ? colors.card : "transparent",
           borderColor: colors.cardBorder,
-          borderWidth: variant === "outline" ? 1 : 0,
+          borderWidth: 1,
+          shadowColor: '#000',
+          shadowOpacity: 0.02,
+          shadowRadius: 2,
+          shadowOffset: { width: 0, height: 1 },
+          elevation: 1,
         },
         style,
       ]}
