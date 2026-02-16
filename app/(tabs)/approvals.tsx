@@ -25,6 +25,7 @@ import { AnimatedBottomSheet } from "@/components/ui/animated-bottom-sheet"
 import { useApprovals } from "@/hooks/use-approvals"
 import { useRealtimeApprovals } from "@/hooks/use-realtime-approvals"
 import { useAuth } from "@/hooks/use-auth"
+import { useBuildings } from "@/hooks/use-buildings"
 import { Colors } from "@/constants/theme"
 import { useColorScheme } from "@/hooks/use-color-scheme"
 import { ActionWithDetails } from "@/types/database"
@@ -57,6 +58,7 @@ export default function ApprovalsScreen() {
   const pickerSlideAnim = useRef(new Animated.Value(0)).current
 
   const { approvals: allApprovals, loading, error, refresh } = useApprovals({ status: "all" })
+  const { buildings: allBuildings } = useBuildings()
 
   // Animate picker view transitions
   useEffect(() => {
@@ -78,23 +80,6 @@ export default function ApprovalsScreen() {
       pickerSlideAnim.setValue(0)
     }
   }, [filterSheetVisible])
-
-  // Extract unique buildings with counts
-  const uniqueBuildings = useMemo(() => {
-    const buildingMap = new Map<string, { id: string; name: string; count: number }>()
-    allApprovals.forEach((approval) => {
-      if (approval.issue?.unit?.building) {
-        const building = approval.issue.unit.building
-        const existing = buildingMap.get(building.id)
-        if (existing) {
-          existing.count++
-        } else {
-          buildingMap.set(building.id, { id: building.id, name: building.name, count: 1 })
-        }
-      }
-    })
-    return Array.from(buildingMap.values()).sort((a, b) => a.name.localeCompare(b.name))
-  }, [allApprovals])
 
   // Extract unique urgencies with counts
   const uniqueUrgencies = useMemo(() => {
@@ -180,11 +165,11 @@ export default function ApprovalsScreen() {
   }, [allApprovals, filter, actionTypeFilter, buildingFilter, urgencyFilter, vendorTradeFilter, sort])
 
   // Real-time updates
-  useRealtimeApprovals({
-    onChange: () => {
-      refresh()
-    },
-  })
+  const handleRealtimeChange = useCallback(() => {
+    refresh()
+  }, [refresh])
+
+  useRealtimeApprovals({ onChange: handleRealtimeChange })
 
   const renderItem = useCallback(
     ({ item }: { item: ActionWithDetails }) => (
@@ -323,7 +308,7 @@ export default function ApprovalsScreen() {
 
           // Show building filter
           if (buildingFilter !== "all_buildings") {
-            const building = uniqueBuildings.find((b) => b.id === buildingFilter)
+            const building = allBuildings.find((b) => b.id === buildingFilter)
             if (building) parts.push(building.name)
           }
 
@@ -560,7 +545,7 @@ export default function ApprovalsScreen() {
                         <ThemedText style={[styles.filterRowValueText, { color: colors.secondary }]}>
                           {buildingFilter === "all_buildings"
                             ? "All Properties"
-                            : uniqueBuildings.find((b) => b.id === buildingFilter)?.name || "All Properties"}
+                            : allBuildings.find((b) => b.id === buildingFilter)?.name || "All Properties"}
                         </ThemedText>
                         <IconSymbol
                           name="chevron.right"
@@ -641,7 +626,7 @@ export default function ApprovalsScreen() {
                           <IconSymbol name="checkmark" size={20} color={colors.tint} />
                         )}
                       </Pressable>
-                      {uniqueBuildings.map((building) => (
+                      {allBuildings.map((building) => (
                         <Pressable
                           key={building.id}
                           style={styles.pickerOption}

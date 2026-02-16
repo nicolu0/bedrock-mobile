@@ -1,5 +1,6 @@
-import { View, StyleSheet, ActivityIndicator, Alert } from "react-native"
-import { useLocalSearchParams, useRouter, Stack } from "expo-router"
+import { View, Pressable, StyleSheet, ActivityIndicator, Alert } from "react-native"
+import { useLocalSearchParams, useRouter } from "expo-router"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { ThemedView } from "@/components/themed-view"
 import { ThemedText } from "@/components/themed-text"
 import { ApprovalDetail } from "@/components/approval/approval-detail"
@@ -15,6 +16,7 @@ export default function ApprovalDetailScreen() {
   const colorScheme = useColorScheme() ?? "light"
   const colors = Colors[colorScheme]
 
+  const insets = useSafeAreaInsets()
   const { approval, loading, error, refresh } = useApproval(id)
 
   const handleSuccess = () => {
@@ -34,10 +36,25 @@ export default function ApprovalDetailScreen() {
     Alert.alert("Error", errorMessage)
   }
 
+  const headerTitle = loading ? "Loading..." : error || !approval ? "Error" : approval.issue.name
+
+  const header = (
+    <View style={[styles.header, { paddingTop: insets.top + 8, borderBottomColor: colors.cardBorder }]}>
+      <Pressable onPress={() => router.back()} style={styles.backButton}>
+        <IconSymbol name="chevron.left" size={15} color={colors.tint} />
+        <ThemedText style={{ fontSize: 17, color: colors.tint }}>Back</ThemedText>
+      </Pressable>
+      <ThemedText numberOfLines={1} style={styles.headerTitle}>
+        {headerTitle}
+      </ThemedText>
+      <View style={styles.headerSpacer} />
+    </View>
+  )
+
   if (loading) {
     return (
       <ThemedView style={styles.container}>
-        <Stack.Screen options={{ title: "Loading..." }} />
+        {header}
         <View style={styles.centered}>
           <ActivityIndicator size="large" color={colors.tint} />
         </View>
@@ -48,7 +65,7 @@ export default function ApprovalDetailScreen() {
   if (error || !approval) {
     return (
       <ThemedView style={styles.container}>
-        <Stack.Screen options={{ title: "Error" }} />
+        {header}
         <View style={styles.centered}>
           <IconSymbol name="exclamationmark.triangle" size={48} color={colors.danger} />
           <ThemedText type="subtitle" style={styles.errorTitle}>
@@ -66,12 +83,7 @@ export default function ApprovalDetailScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: approval.issue.name,
-          headerBackTitle: "Back",
-        }}
-      />
+      {header}
       <ApprovalDetail approval={approval} />
       {isPending && (
         <ApprovalActions
@@ -87,6 +99,28 @@ export default function ApprovalDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+    minWidth: 80,
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 21,
+    fontWeight: "600",
+  },
+  headerSpacer: {
+    minWidth: 80,
   },
   centered: {
     flex: 1,

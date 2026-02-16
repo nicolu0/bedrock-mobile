@@ -2,7 +2,7 @@ import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import type { Theme } from '@react-navigation/native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import 'react-native-reanimated';
 import { useAuth } from '@/hooks/use-auth';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
@@ -28,20 +28,21 @@ function RootLayoutNav() {
   const { user, loading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const segmentsRef = useRef(segments);
+  segmentsRef.current = segments;
 
   useEffect(() => {
     if (loading) return;
 
-    const inAuthGroup = segments[0] === '(tabs)' || segments[0] === 'approval';
+    const currentSegments = segmentsRef.current;
+    const inAuthGroup = currentSegments[0] === '(tabs)' || currentSegments[0] === 'approval';
 
     if (!user && inAuthGroup) {
-      // Redirect to sign-in if not authenticated
       router.replace('/sign-in');
-    } else if (user && !inAuthGroup) {
-      // Redirect to app if authenticated
+    } else if (user && !inAuthGroup && currentSegments[0] !== undefined) {
       router.replace('/(tabs)/approvals');
     }
-  }, [user, loading, segments]);
+  }, [user, loading]);
 
   if (loading) {
     return (
@@ -57,10 +58,7 @@ function RootLayoutNav() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="approval/[id]"
-        options={{
-          title: 'Approval Details',
-          headerBackTitle: 'Back',
-        }}
+        options={{ headerShown: false }}
       />
     </Stack>
   );

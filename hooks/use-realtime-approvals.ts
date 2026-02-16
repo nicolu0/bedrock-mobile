@@ -14,6 +14,8 @@ type UseRealtimeApprovalsOptions = {
 
 export function useRealtimeApprovals(options: UseRealtimeApprovalsOptions) {
   const channelRef = useRef<RealtimeChannel | null>(null)
+  const optionsRef = useRef(options)
+  optionsRef.current = options
 
   useEffect(() => {
     const channel = supabase
@@ -31,24 +33,22 @@ export function useRealtimeApprovals(options: UseRealtimeApprovalsOptions) {
 
           console.log("[Realtime] Action event:", event, action?.title)
 
-          options.onChange?.(event, action)
+          optionsRef.current.onChange?.(event, action)
 
           switch (event) {
             case "INSERT":
-              options.onInsert?.(action)
+              optionsRef.current.onInsert?.(action)
               break
             case "UPDATE":
-              options.onUpdate?.(action)
+              optionsRef.current.onUpdate?.(action)
               break
             case "DELETE":
-              options.onDelete?.(action)
+              optionsRef.current.onDelete?.(action)
               break
           }
         }
       )
-      .subscribe((status) => {
-        console.log("[Realtime] Subscription status:", status)
-      })
+      .subscribe()
 
     channelRef.current = channel
 
@@ -57,5 +57,5 @@ export function useRealtimeApprovals(options: UseRealtimeApprovalsOptions) {
         supabase.removeChannel(channelRef.current)
       }
     }
-  }, [options.onInsert, options.onUpdate, options.onDelete, options.onChange])
+  }, [])
 }
